@@ -26,6 +26,7 @@ public class PolicyHolderService
         return customers;
     }
 
+
     // Update this method to send status as an integer
     public async Task UpdateStatusAsync(int id, int status)
     {

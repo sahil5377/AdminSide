@@ -12,6 +12,7 @@ namespace InsuranceApi.Services
         Task Delete(int id);
         Task<List<HospitalDto>> GetAll();
         Task<HospitalDto> GetById(int id);
+        Task<int> GetHospitalCount();
         Task Update(HospitalDto hospitalDto);
     }
 
@@ -98,6 +99,10 @@ namespace InsuranceApi.Services
             hospitalTable.Address = hospitalDto.Address;
             hospitalTable.Phone = hospitalDto.Phone;
             return;
+        }
+        public async Task<int> GetHospitalCount()
+        {
+            return await context.Hospitals.CountAsync();
         }
     }
 }

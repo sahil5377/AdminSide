@@ -83,5 +83,18 @@ namespace InsuranceApi.Controllers
                 return NotFound();
             }
         }
+        [HttpGet("count")]
+        public async Task<IActionResult> GetHospitalCount()
+        {
+            try
+            {
+                var count = await service.GetHospitalCount();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

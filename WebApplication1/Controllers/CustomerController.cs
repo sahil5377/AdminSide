@@ -22,6 +22,7 @@ namespace WebApplication1.Controllers
             return View(policyHolders);
         }
 
+
         [HttpPut]
         [Route("PolicyHolder/{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] int status)

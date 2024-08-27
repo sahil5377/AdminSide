@@ -9,3 +9,4 @@ C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\SharedModels\o
 C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\SharedModels\obj\Debug\net8.0\refint\SharedModels.dll
 C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\SharedModels\obj\Debug\net8.0\SharedModels.pdb
 C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\SharedModels\obj\Debug\net8.0\ref\SharedModels.dll
+C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\SharedModels\obj\Debug\net8.0\SharedModels.sourcelink.json

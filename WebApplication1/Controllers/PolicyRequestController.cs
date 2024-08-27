@@ -64,6 +64,7 @@ namespace WebApplication1.Controllers
             var policyHolder = await _policyRequestService.GetPolicyHolderAsync(insuredPolicy.InsuredId);
             var policy = await _policyRequestService.GetPolicyAsync(insuredPolicy.PolicyId);
             var payments = await _policyRequestService.GetPaymentsByInsuredPolicyIdAsync(insuredPolicy.InsuredPolicyId);
+            
 
             var viewModel = new ReviewPolicyRequestViewModel
             {
@@ -129,6 +130,7 @@ namespace WebApplication1.Controllers
     {
         public string PolicyHolderName { get; set; }
         public int InsuredId { get; set; }
+        public string InsuredName { get; set; }
         public int InsuredPolicyId { get; set; }
         public int PolicyId { get; set; }
         public int AdminId { get; set; }

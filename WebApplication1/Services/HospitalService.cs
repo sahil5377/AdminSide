@@ -43,6 +43,15 @@ namespace WebApplication1.Services
             var response = await _httpClient.DeleteAsync($"Hospital/{hospitalId}");
             response.EnsureSuccessStatusCode();
         }
+        public async Task<int> GetHospitalCountAsync()
+        {
+            var response = await _httpClient.GetAsync("Hospital/count");
+            response.EnsureSuccessStatusCode();
+            var count = await response.Content.ReadFromJsonAsync<int>();
+            return count;
+
+        }
+
     }
 
     public interface IHospitalService
@@ -51,5 +60,6 @@ namespace WebApplication1.Services
         Task<List<Hospital>> AddHospitalAsync(Hospital hospital);
         Task UpdateHospitalAsync(Hospital hospital);
         Task DeleteHospitalAsync(int hospitalId);
+        Task<int> GetHospitalCountAsync();
     }
 }

@@ -136,3 +136,4 @@ C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\InsuranceApi\o
 C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\InsuranceApi\obj\Debug\net8.0\InsuranceApi.pdb
 C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\InsuranceApi\obj\Debug\net8.0\InsuranceApi.genruntimeconfig.cache
 C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\InsuranceApi\obj\Debug\net8.0\ref\InsuranceApi.dll
+C:\Users\6147955\source\repos\Project_MedicalInsurance\ClientSide\InsuranceApi\obj\Debug\net8.0\InsuranceApi.sourcelink.json

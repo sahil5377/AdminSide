@@ -18,8 +18,12 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> ManageHospitals()
         {
             var hospitals = await _hospitalService.GetAllHospitalsAsync();
+            var hospitalCount = await _hospitalService.GetHospitalCountAsync();
+
+            ViewData["HospitalCount"] = hospitalCount;  // Pass the count to the view
             return View(hospitals);
         }
+        
 
         [HttpPost]
         public async Task<IActionResult> AddHospital(Hospital hospital)
@@ -49,5 +53,6 @@ namespace WebApplication1.Controllers
             await _hospitalService.DeleteHospitalAsync(hospitalId);
             return RedirectToAction("ManageHospitals");
         }
+
     }
 }
