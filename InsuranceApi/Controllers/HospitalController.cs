@@ -14,6 +14,7 @@ namespace InsuranceApi.Controllers
         Task<IActionResult> GetAll();
         Task<IActionResult> GetById(int id);
         Task<IActionResult> Update(HospitalDto hospital);
+        Task<ActionResult<int>> GetHospitalCount();
     }
 
     [Route("api/[controller]")]
@@ -84,12 +85,25 @@ namespace InsuranceApi.Controllers
             }
         }
         [HttpGet("count")]
-        public async Task<IActionResult> GetHospitalCount()
+        public async Task<ActionResult<int>>GetHospitalCount()
         {
             try
             {
                 var count = await service.GetHospitalCount();
                 return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string term)
+        {
+            try
+            {
+                var hospitals = await service.SearchHospitalAsync(term);
+                return Ok(hospitals);
             }
             catch (Exception ex)
             {

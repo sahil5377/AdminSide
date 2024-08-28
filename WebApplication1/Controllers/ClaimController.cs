@@ -18,6 +18,9 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> ManageClaims()
         {
             var claims = await _claimService.GetAllClaimsAsync();
+            var claimCount = await _claimService.GetClaimCountAsync();
+            TempData["ClaimCount"] = claimCount;  // Pass the count to the view
+            TempData.Keep("ClaimCount");
             return View(claims);
         }
         [HttpPost]

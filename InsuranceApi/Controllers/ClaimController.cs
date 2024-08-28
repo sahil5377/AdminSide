@@ -84,6 +84,20 @@ namespace InsuranceApi.Controllers
                 return NotFound();
             }
         }
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetClaimCount()
+        {
+            try
+            {
+                var count = await service.GetClaimCount();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
     }
 
     public class ClaimStatusUpdateDto

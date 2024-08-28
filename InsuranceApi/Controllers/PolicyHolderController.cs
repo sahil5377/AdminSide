@@ -88,5 +88,31 @@ namespace InsuranceApi.Controllers
                 return NotFound();
             }
         }
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetCustomerCount()
+        {
+            try
+            {
+                var count = await _service.GetCustomerCount();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string term)
+        {
+            try
+            {
+                var policyHolders = await _service.SearchPolicyHoldersAsync(term);
+                return Ok(policyHolders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

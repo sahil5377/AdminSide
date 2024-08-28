@@ -2,6 +2,8 @@
 using InsuranceApi.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace InsuranceApi.Services
@@ -12,8 +14,10 @@ namespace InsuranceApi.Services
         Task Delete(int id);
         Task<List<PolicyHolderDto>> GetAll();
         Task<PolicyHolderDto> GetById(int id);
+        Task<int> GetCustomerCount();
         Task Update(PolicyHolderDto policyHolderDto);
         Task UpdateStatus(int id, int status);
+        Task<List<PolicyHolderDto>> SearchPolicyHoldersAsync(string searchTerm);
     }
 
     public class PolicyHolderService : IPolicyHolderService
@@ -93,6 +97,29 @@ namespace InsuranceApi.Services
             }
             throw new NullReferenceException();
         }
+        public async Task<int> GetCustomerCount()
+        {
+            return await context.PolicyHolders.CountAsync();
+        }
+        public async Task<List<PolicyHolderDto>> SearchPolicyHoldersAsync(string searchTerm)
+        {
+            var query = context.PolicyHolders.AsQueryable();
+
+            if (int.TryParse(searchTerm, out int id))
+            {
+                // Search by PolicyHolderId
+                query = query.Where(ph => ph.PolicyHolderId == id);
+            }
+            else
+            {
+                // Search by Name
+                query = query.Where(ph => ph.Name.Contains(searchTerm));
+            }
+
+            var policyHolders = await query.ToListAsync();
+            return policyHolders.Select(ConvertToDto).ToList();
+        }
+
 
         private PolicyHolderDto ConvertToDto(PolicyHolder policyHolderTable)
         {

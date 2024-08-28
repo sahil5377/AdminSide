@@ -54,7 +54,7 @@ namespace WebApplication1
                 options.AddPolicy("AllowSpecificOrigin",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:5187") // Replace with your frontend origin
+                        builder.AllowAnyOrigin() // Replace with your frontend origin
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
@@ -83,7 +83,7 @@ namespace WebApplication1
             app.UseRouting();
 
             // Use CORS policy
-            app.UseCors("AllowSpecificOrigin");
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

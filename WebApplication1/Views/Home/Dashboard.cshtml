@@ -1,7 +1,10 @@
-﻿@* Dashboard.cshtml *@
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Dashboard";
+    var policyRequestCount = TempData.Peek("PolicyRequestCount") ?? "0";
+    var claimCount = TempData.Peek("ClaimCount") ?? "0";
+    var customerCount = TempData.Peek("CustomerCount") ?? "0";
+    var hospitalCount = TempData.Peek("HospitalCount") ?? "0";
 }
 
 <div class="container-fluid">
@@ -9,57 +12,47 @@
     <hr />
     <div class="row mb-4">
         <div class="col-lg-3 col-md-6">
-            <div class="stat-counter bg-primary text-white mb-3">
+            <div class="stat-counter card-gradient-primary mb-3 shadow-sm">
                 <div class="stat-icon">
                     <i class="fas fa-file-alt"></i>
                 </div>
-                <div class="stat-number" data-number="1500">1500</div>
+                <div class="stat-number" id="policyRequestCount">@policyRequestCount</div>
                 <div class="stat-label">Total Policies</div>
+            </div>
+            <!-- Chart for Total Policies -->
+            <div class="chart-container">
+                <canvas id="policyChart"></canvas>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="stat-counter bg-success text-white mb-3">
+            <div class="stat-counter card-gradient-success mb-3 shadow-sm">
                 <div class="stat-icon">
                     <i class="fas fa-clipboard-check"></i>
                 </div>
-                <div class="stat-number" data-number="200">200</div>
-                <div class="stat-label">Active Claims</div>
+                <div class="stat-number" id="claimCount">@claimCount</div>
+                <div class="stat-label">Total Claim Requests</div>
+            </div>
+            <!-- Chart for Total Claim Requests -->
+            <div class="chart-container">
+                <canvas id="claimChart"></canvas>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="stat-counter bg-warning text-white mb-3">
+            <div class="stat-counter card-gradient-warning mb-3 shadow-sm">
                 <div class="stat-icon">
-                    <i class="fas fa-ban"></i>
+                    <i class="fa fa-users"></i>
                 </div>
-                <div class="stat-number" data-number="50">50</div>
-                <div class="stat-label">Rejected Claims</div>
+                <div class="stat-number" id="customerCount">@customerCount</div>
+                <div class="stat-label">Total Customers</div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="stat-counter bg-danger text-white mb-3">
+            <div class="stat-counter card-gradient-danger mb-3 shadow-sm">
                 <div class="stat-icon">
                     <i class="fas fa-hospital"></i>
                 </div>
-                <div class="stat-number" data-number="@ViewData["HospitalCount"]">@ViewData["HospitalCount"]</div>
+                <div class="stat-number" id="hospitalCount">@hospitalCount</div>
                 <div class="stat-label">Active Hospitals</div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">Policies Overview</div>
-                <div class="card-body chart-container">
-                    <canvas id="policiesChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">Claims Overview</div>
-                <div class="card-body chart-container">
-                    <canvas id="claimsChart"></canvas>
-                </div>
             </div>
         </div>
     </div>
@@ -70,19 +63,36 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 30px;
+        padding: 20px;
         border-radius: 15px;
         color: #fff;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
+    .card-gradient-primary {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+    }
+
+    .card-gradient-success {
+        background: linear-gradient(135deg, #1d976c, #93f9b9);
+    }
+
+    .card-gradient-warning {
+        background: linear-gradient(135deg, #f5af19, #f12711);
+    }
+
+    .card-gradient-danger {
+        background: linear-gradient(135deg, #8e2de2, #4a00e0);
+    }
+
     .stat-icon {
-        font-size: 2rem;
+        font-size: 2.5rem;
         margin-bottom: 10px;
     }
 
     .stat-number {
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: bold;
     }
 
@@ -97,63 +107,77 @@
 
     .chart-container {
         position: relative;
-        height: 400px;
+        height: 200px;
+        margin-top: 20px;
+    }
+
+    .card {
+        margin-bottom: 30px;
+        border-radius: 20px;
+    }
+
+    .card-header {
+        font-size: 1.5rem;
+        padding: 15px;
+    }
+
+    .card-body {
+        padding: 20px;
     }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.stat-number').forEach(function (el) {
-            const number = parseInt(el.getAttribute('data-number'), 10);
-            let counter = 0;
-            const interval = setInterval(function () {
-                if (counter >= number) {
-                    clearInterval(interval);
-                } else {
-                    counter += Math.ceil(number / 100);
-                    el.textContent = counter > number ? number : counter;
-                }
-            }, 10);
-        });
-    });
-    var ctx = document.getElementById('policiesChart').getContext('2d');
-    var policiesChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-            datasets: [{
-                label: 'Number of Policies',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            animation: {
-                duration: 1500
-            }
-        }
-    });
+        const policyCount = parseInt(document.getElementById('policyRequestCount').textContent, 10);
+        const claimCount = parseInt(document.getElementById('claimCount').textContent, 10);
 
-    var ctx2 = document.getElementById('claimsChart').getContext('2d');
-    var claimsChart = new Chart(ctx2, {
-        type: 'line',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-            datasets: [{
-                label: 'Number of Claims',
-                data: [3, 2, 5, 7, 6, 4],
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            animation: {
-                duration: 1500
+        // Bar Chart for Total Policies
+        const policyChartCtx = document.getElementById('policyChart').getContext('2d');
+        new Chart(policyChartCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Policies'],
+                datasets: [{
+                    label: 'Policies',
+                    data: [policyCount],
+                    backgroundColor: 'rgba(30, 60, 114, 0.7)',
+                    borderColor: 'rgba(30, 60, 114, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        }
+        });
+
+        // Bar Chart for Total Claim Requests
+        const claimChartCtx = document.getElementById('claimChart').getContext('2d');
+        new Chart(claimChartCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Claims'],
+                datasets: [{
+                    label: 'Claims',
+                    data: [claimCount],
+                    backgroundColor: 'rgba(29, 151, 108, 0.7)',
+                    borderColor: 'rgba(29, 151, 108, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     });
 </script>

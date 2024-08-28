@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using InsuranceApi.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Models;
 using WebApplication1.Services;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WebApplication1.Controllers
 {
@@ -15,18 +17,32 @@ namespace WebApplication1.Controllers
             _hospitalService = hospitalService;
         }
 
-        public async Task<IActionResult> ManageHospitals()
+        [HttpGet]
+        public async Task<IActionResult> ManageHospitals(string searchTerm = "")
         {
-            var hospitals = await _hospitalService.GetAllHospitalsAsync();
-            var hospitalCount = await _hospitalService.GetHospitalCountAsync();
+            List<HospitalDto> hospitals;
 
-            ViewData["HospitalCount"] = hospitalCount;  // Pass the count to the view
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                // Fetch all hospitals if no search term is provided
+                hospitals = await _hospitalService.GetAllHospitalsAsync();
+            }
+            else
+            {
+                // Fetch hospitals matching the search term
+                hospitals = await _hospitalService.SearchHospitalsAsync(searchTerm);
+            }
+
+            var hospitalCount = await _hospitalService.GetHospitalCountAsync();
+            TempData["HospitalCount"] = hospitalCount;
+            TempData.Keep("HospitalCount");
+
+            ViewData["SearchTerm"] = searchTerm; // Pass search term to the view
             return View(hospitals);
         }
-        
 
         [HttpPost]
-        public async Task<IActionResult> AddHospital(Hospital hospital)
+        public async Task<IActionResult> AddHospital(HospitalDto hospital)
         {
             if (ModelState.IsValid)
             {
@@ -37,7 +53,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateHospital(Hospital hospital)
+        public async Task<IActionResult> UpdateHospital(HospitalDto hospital)
         {
             if (ModelState.IsValid)
             {
@@ -53,6 +69,5 @@ namespace WebApplication1.Controllers
             await _hospitalService.DeleteHospitalAsync(hospitalId);
             return RedirectToAction("ManageHospitals");
         }
-
     }
 }

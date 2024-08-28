@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
             height: 100vh;
             background-color: #f8f9fa;
+            margin: 0; /* Ensure no default margin is causing alignment issues */
         }
 
         .login-container {

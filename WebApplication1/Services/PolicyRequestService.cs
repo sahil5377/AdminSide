@@ -49,6 +49,14 @@ namespace WebApplication1.Services
             var response = await _httpClient.PutAsJsonAsync($"InsuredPolicy/{insuredPolicyId}/ApprovalStatus", approvalStatus);
             return response.IsSuccessStatusCode;
         }
+        public async Task<int> GetPolicyCountAsync()
+        {
+            var response = await _httpClient.GetAsync("InsuredPolicy/count");
+            response.EnsureSuccessStatusCode();
+            var count = await response.Content.ReadFromJsonAsync<int>();
+            return count;
+
+        }
     }
 }
 
@@ -58,5 +66,6 @@ public interface IPolicyRequestService
     Task<PolicyHolderDto> GetPolicyHolderAsync(int policyHolderId);
     Task<PolicyDto> GetPolicyAsync(int policyId);
     Task<List<PaymentDto>> GetPaymentsByInsuredPolicyIdAsync(int insuredPolicyId);
+    Task<int> GetPolicyCountAsync();
     Task<bool> UpdateApprovalStatusAsync(int insuredPolicyId, string approvalStatus);
 }

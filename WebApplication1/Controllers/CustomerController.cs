@@ -16,12 +16,30 @@ namespace WebApplication1.Controllers
             _policyHolderService = policyHolderService;
         }
 
-        public async Task<IActionResult> ManageCustomers()
+
+        [HttpGet]
+        public async Task<IActionResult> ManageCustomers(string searchTerm = "")
         {
-            var policyHolders = await _policyHolderService.GetPolicyHoldersAsync();
+            List<PolicyHolderDto> policyHolders;
+
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                // Fetch all policy holders if no search term is provided
+                policyHolders = await _policyHolderService.GetPolicyHoldersAsync();
+            }
+            else
+            {
+                // Fetch policy holders matching the search term
+                policyHolders = await _policyHolderService.SearchPolicyHoldersAsync(searchTerm);
+            }
+
+            var customerCount = await _policyHolderService.GetCustomerCountAsync();
+            TempData["CustomerCount"] = customerCount;
+            TempData.Keep("CustomerCount");
+
+            ViewData["SearchTerm"] = searchTerm; // Pass search term to the view
             return View(policyHolders);
         }
-
 
         [HttpPut]
         [Route("PolicyHolder/{id}/status")]
@@ -37,5 +55,12 @@ namespace WebApplication1.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the status.");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> SearchCustomers(string searchTerm = "")
+        {
+            var searchCustomers = await _policyHolderService.SearchPolicyHoldersAsync(searchTerm);
+            return View(searchCustomers);
+        }
+
     }
 }

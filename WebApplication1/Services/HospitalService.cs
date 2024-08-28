@@ -1,7 +1,9 @@
-﻿using System.Net.Http;
+﻿using InsuranceApi.DTOs;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using WebApplication1.Models;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WebApplication1.Services
 {
@@ -14,25 +16,24 @@ namespace WebApplication1.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<Hospital>> GetAllHospitalsAsync()
+        public async Task<List<HospitalDto>> GetAllHospitalsAsync()
         {
             var response = await _httpClient.GetAsync("Hospital");
             response.EnsureSuccessStatusCode();
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var hospitals = JsonSerializer.Deserialize<List<Hospital>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var hospitals = JsonSerializer.Deserialize<List<HospitalDto>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             return hospitals;
         }
 
-        public async Task<List<Hospital>>AddHospitalAsync(Hospital hospital)
+        public async Task AddHospitalAsync(HospitalDto hospital)
         {
             var response = await _httpClient.PostAsJsonAsync("Hospital", hospital);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<Hospital>>();
         }
 
-        public async Task UpdateHospitalAsync(Hospital hospital)
+        public async Task UpdateHospitalAsync(HospitalDto hospital)
         {
             var response = await _httpClient.PutAsJsonAsync($"Hospital/{hospital.HospitalId}", hospital);
             response.EnsureSuccessStatusCode();
@@ -43,23 +44,35 @@ namespace WebApplication1.Services
             var response = await _httpClient.DeleteAsync($"Hospital/{hospitalId}");
             response.EnsureSuccessStatusCode();
         }
+
         public async Task<int> GetHospitalCountAsync()
         {
             var response = await _httpClient.GetAsync("Hospital/count");
             response.EnsureSuccessStatusCode();
             var count = await response.Content.ReadFromJsonAsync<int>();
             return count;
-
         }
 
+        public async Task<List<HospitalDto>> SearchHospitalsAsync(string searchTerm)
+        {
+            string endpoint = $"Hospital/search?term={searchTerm}";
+            var response = await _httpClient.GetAsync(endpoint);
+            response.EnsureSuccessStatusCode();
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var hospitals = JsonSerializer.Deserialize<List<HospitalDto>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return hospitals;
+        }
     }
 
     public interface IHospitalService
     {
-        Task<List<Hospital>> GetAllHospitalsAsync();
-        Task<List<Hospital>> AddHospitalAsync(Hospital hospital);
-        Task UpdateHospitalAsync(Hospital hospital);
+        Task<List<HospitalDto>> GetAllHospitalsAsync();
+        Task AddHospitalAsync(HospitalDto hospital);
+        Task UpdateHospitalAsync(HospitalDto hospital);
         Task DeleteHospitalAsync(int hospitalId);
         Task<int> GetHospitalCountAsync();
+        Task<List<HospitalDto>> SearchHospitalsAsync(string searchTerm);
     }
 }

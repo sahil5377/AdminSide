@@ -36,4 +36,22 @@ public class PolicyHolderService
         var response = await _httpClient.PutAsync(endpoint, content);
         response.EnsureSuccessStatusCode();
     }
+    public async Task<int> GetCustomerCountAsync()
+    {
+        var response = await _httpClient.GetAsync("PolicyHolder/count");
+        response.EnsureSuccessStatusCode();
+        var count = await response.Content.ReadFromJsonAsync<int>();
+        return count;
+    }
+    public async Task<List<PolicyHolderDto>> SearchPolicyHoldersAsync(string searchTerm)
+    {
+        string endpoint = $"PolicyHolder/search?term={searchTerm}";
+        var response = await _httpClient.GetAsync(endpoint);
+        response.EnsureSuccessStatusCode();
+
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        var policyHolders = JsonSerializer.Deserialize<List<PolicyHolderDto>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        return policyHolders;
+    }
 }

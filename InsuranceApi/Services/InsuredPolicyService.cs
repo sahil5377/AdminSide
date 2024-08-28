@@ -10,6 +10,7 @@ namespace InsuranceApi.Services
         Task Delete(int id);
         Task<List<InsuredPolicyDto>> GetAll();
         Task<InsuredPolicyDto> GetById(int id);
+        Task<int> GetPolicyCount();
         Task Update(InsuredPolicyDto insuredPolicyDto);
         Task UpdateApprovalStatus(int id, string approvalStatus);
     }
@@ -90,6 +91,10 @@ namespace InsuranceApi.Services
                 return;
             }
             throw new NullReferenceException();
+        }
+        public async Task<int> GetPolicyCount()
+        {
+            return await context.InsuredPolicies.CountAsync();
         }
 
         private InsuredPolicyDto ConvertToDto(InsuredPolicy insuredPolicyTable)

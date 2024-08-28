@@ -11,6 +11,7 @@ namespace InsuranceApi.Services
         Task<List<ClaimDto>> GetAll();
         Task<ClaimDto> GetById(int id);
         Task Update(ClaimDto claimDto);
+        Task<int> GetClaimCount();
         Task UpdateStatus(int id, string status, decimal dispenseAmount);
     }
 
@@ -72,6 +73,10 @@ namespace InsuranceApi.Services
                 return;
             }
             throw new NullReferenceException($"Claim with ID {id} not found.");
+        }
+        public async Task<int> GetClaimCount()
+        {
+            return await context.Claims.CountAsync();
         }
 
         public async Task UpdateStatus(int id, string status, decimal dispenseAmount)

@@ -14,6 +14,7 @@ namespace InsuranceApi.Services
         Task<HospitalDto> GetById(int id);
         Task<int> GetHospitalCount();
         Task Update(HospitalDto hospitalDto);
+        Task<List<HospitalDto>> SearchHospitalAsync(string searchTerm);
     }
 
     public class HospitalService : IHospitalService
@@ -103,6 +104,24 @@ namespace InsuranceApi.Services
         public async Task<int> GetHospitalCount()
         {
             return await context.Hospitals.CountAsync();
+        }
+        public async Task<List<HospitalDto>> SearchHospitalAsync(string searchTerm)
+        {
+            var query = context.Hospitals.AsQueryable();
+
+            if (int.TryParse(searchTerm, out int id))
+            {
+                // Search by PolicyHolderId
+                query = query.Where(hc => hc.HospitalId == id);
+            }
+            else
+            {
+                // Search by Name
+                query = query.Where(hc => hc.Name.Contains(searchTerm));
+            }
+
+            var hospitals = await query.ToListAsync();
+            return hospitals.Select(ConvertToDto).ToList();
         }
     }
 }

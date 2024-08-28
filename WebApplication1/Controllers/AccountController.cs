@@ -38,7 +38,7 @@ namespace WebApplication1.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Profile", "Home");
             }
 
             ModelState.AddModelError("", "Invalid Login Username OR Password.");

@@ -11,6 +11,7 @@ namespace InsuranceApi.Controllers
         Task<IActionResult> Delete(int id);
         Task<IActionResult> GetAll();
         Task<IActionResult> GetById(int id);
+        Task<ActionResult<int>> GetPolicyCount();
         Task<IActionResult> Update(InsuredPolicyDto insuredPolicyDto);
     }
 
@@ -93,6 +94,19 @@ namespace InsuranceApi.Controllers
             catch (NullReferenceException)
             {
                 return NotFound();
+            }
+        }
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetPolicyCount()
+        {
+            try
+            {
+                var count = await service.GetPolicyCount();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

@@ -23,6 +23,10 @@ namespace WebApplication1.Controllers
         {
             var insuredPolicies = await _policyRequestService.GetInsuredPoliciesAsync();
             var policyRequests = new List<PolicyRequestViewModel>();
+            var policyRequestCount = await _policyRequestService.GetPolicyCountAsync();
+
+            TempData["PolicyRequestCount"] = policyRequestCount;  // Pass the count to the view
+            TempData.Keep("PolicyRequestCount");
 
             foreach (var policy in insuredPolicies)
             {

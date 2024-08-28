@@ -32,12 +32,21 @@ namespace WebApplication1.Services
             var response = await _httpClient.PutAsJsonAsync($"Claim/{claimId}/status", updateDto);
             response.EnsureSuccessStatusCode();
         }
-        
+        public async Task<int> GetClaimCountAsync()
+        {
+            var response = await _httpClient.GetAsync("Claim/count");
+            response.EnsureSuccessStatusCode();
+            var count = await response.Content.ReadFromJsonAsync<int>();
+            return count;
+
+        }
+
     }
 
     public interface IClaimService
     {
         Task<List<ClaimDto>> GetAllClaimsAsync();
+        Task<int> GetClaimCountAsync();
         Task UpdateClaimStatusAsync(int claimId, string status, decimal dispenseAmount);
     }
 }

@@ -2,10 +2,20 @@
 
 @{
     ViewData["Title"] = "Manage Customers";
+    var searchTerm = ViewData["SearchTerm"] as string ?? "";
 }
 
 <h2 class="page-title">Manage Customers</h2>
 
+<!-- Search Form -->
+<form method="get" asp-action="ManageCustomers" class="mb-4">
+    <div class="form-group">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Search by Name or Policy Holder ID" value="@searchTerm" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<!-- Customers Table -->
 <div class="table-responsive">
     <table class="table table-striped table-hover">
         <thead class="thead-custom">
